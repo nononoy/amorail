@@ -5,8 +5,9 @@ module Amorail # :nodoc: all
       self.class.attributes.each do |k, v|
         data[k] = send("to_#{v}", send(k))
       end
-
-      data[:custom_fields] = custom_fields if properties.respond_to?(amo_name)
+      if properties.respond_to?(amo_name)
+        data[:custom_fields] = client.try(:custom_options).try(:any?) ? custom_options(client.custom_options) : custom_fields
+      end
 
       normalize_params(data)
     end
@@ -25,6 +26,16 @@ module Amorail # :nodoc: all
       end
 
       custom_fields
+    end
+
+    def custom_options(options)
+      custom_options = []
+
+      options.each do |k, v|
+        custom_options << { id: k, values: [{value: v}] }
+      end
+
+      custom_options
     end
 
     def create_params(method)

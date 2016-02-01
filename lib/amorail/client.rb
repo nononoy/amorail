@@ -6,21 +6,22 @@ require 'active_support'
 module Amorail
   # Amorail http client
   class Client
-    attr_reader :usermail, :api_key, :api_endpoint
+    attr_reader :usermail, :api_key, :api_endpoint, :custom_options
 
     def initialize(api_endpoint: Amorail.config.api_endpoint,
                    api_key: Amorail.config.api_key,
-                   usermail: Amorail.config.usermail)
+                   usermail: Amorail.config.usermail,
+                   custom_options: {})
       @api_endpoint = api_endpoint
       @api_key = api_key
       @usermail = usermail
+      @custom_options = custom_options if custom_options.any?
       @connect = Faraday.new(url: api_endpoint) do |faraday|
         faraday.adapter Faraday.default_adapter
         faraday.response :json, content_type: /\bjson$/
         faraday.use :instrumentation
       end
     end
-
     def properties
       @properties ||= Property.new(self)
     end
