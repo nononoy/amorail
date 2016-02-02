@@ -31,9 +31,12 @@ module Amorail # :nodoc: all
       custom_options = []
 
       options.each do |k, v|
-        custom_options << { id: k, values: [{value: v}] }
+        if v.is_a? Array
+          custom_options << { id: k, values: v }
+        else
+          custom_options << { id: k, values: [{value: v}] }
+        end
       end
-
       custom_options
     end
 
