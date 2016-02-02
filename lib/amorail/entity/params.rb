@@ -8,7 +8,6 @@ module Amorail # :nodoc: all
       if properties.respond_to?(amo_name)
         data[:custom_fields] = client.try(:custom_options).try(:any?) ? custom_options(client.custom_options) : custom_fields
       end
-
       normalize_params(data)
     end
 

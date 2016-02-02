@@ -74,7 +74,6 @@ module Amorail
 
     def handle_response(response) # rubocop:disable all
       return response if response.status == 200 || response.status == 204
-
       case response.status
       when 301
         fail ::Amorail::AmoMovedPermanentlyError

@@ -120,5 +120,6 @@ module Amorail
         new hash
       end
     end
+
   end
 end
