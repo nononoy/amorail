@@ -16,7 +16,6 @@ module Amorail # :nodoc: all
 
       def find_all(*ids)
         ids = ids.first if ids.size == 1 && ids.first.is_a?(Array)
-
         response = client.safe_request(
           :get,
           remote_url('list'),
