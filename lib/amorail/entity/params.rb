@@ -41,7 +41,7 @@ module Amorail # :nodoc: all
     end
 
     def create_params(method)
-      {
+      result = {
         request: {
           self.class.amo_response_name => {
             method => [
@@ -50,6 +50,8 @@ module Amorail # :nodoc: all
           }
         }
       }
+      result[:request][self.class.amo_response_name][:category] = self.category.to_s if self.is_a?(Unsorted)
+      result
     end
 
     def normalize_custom_fields(val)
