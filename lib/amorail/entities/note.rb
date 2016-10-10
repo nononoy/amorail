@@ -4,7 +4,7 @@ module Amorail
     amo_names "notes"
 
     amo_field :element_id, :element_type, :text,
-              :note_type
+              :note_type, :created_user_id
 
     validates :text, :element_id,
               :element_type, :note_type,

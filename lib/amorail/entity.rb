@@ -45,8 +45,11 @@ module Amorail
           superclass.respond_to?(:properties) ? superclass.properties.dup : {}
       end
 
-      def remote_url(action)
-        File.join(Amorail.config.api_path, amo_name, action)
+      def remote_url(action, opt = {})
+        api_path = opt[:api_path] || Amorail.config.api_path
+        url = File.join(api_path, amo_name, action)
+        url += "?api_key=#{client.api_key}&login=#{client.usermail}" if url.include?('/unsorted/')
+        url
       end
     end
 
@@ -67,7 +70,7 @@ module Amorail
 
     def reload_model(info)
       merge_params(info)
-      merge_custom_fields(info['custom_fields'])
+      merge_custom_fields(info['custom_fields']) rescue nil
       self
     end
 
@@ -101,15 +104,22 @@ module Amorail
     end
 
     def commit_request(attrs)
+      Amorail.config.api_path
+      action = 'set'
+      opt = {}
+      if self.is_a?(Unsorted)
+        action = 'add'
+        opt[:api_path] = Amorail.config.short_api_path
+      end
       client.safe_request(
         :post,
-        remote_url('set'),
+        remote_url(action, opt),
         normalize_params(attrs)
       )
     end
 
     def handle_response(response, method)
-      return false unless response.status == 200
+      return false unless [200, 201].include? response.status
       extract_method = "extract_data_#{method}"
       reload_model(
         send(extract_method,
